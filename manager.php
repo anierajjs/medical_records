@@ -19,13 +19,18 @@ if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
 
+// Retrieve the manager's department number if it exists in the session
+$managerDeptNo = isset($_SESSION['deptNo']) ? $_SESSION['deptNo'] : '';
 
+// Fetch records for the manager's department from the view if the department number is set
+if (!empty($managerDeptNo)) {
+  $viewName = "records_view_dept_" . strtolower($managerDeptNo); // Modify the view name format here
+  $sql = "SELECT RecordID, ClientNo, DeptNo, Allocation_Date, Last_Update, Risk_Factor FROM $viewName"; // Modify the SELECT statement to specify the columns you want to retrieve
+  $result = $conn->query($sql);
+}
 
-// Fetch all records from the table
-$sql = "SELECT * FROM Records";
-$result = $conn->query($sql);
+$conn->close();
 ?>
-
 
 <!DOCTYPE html>
 <html>
@@ -42,12 +47,11 @@ $result = $conn->query($sql);
       <th>DeptNo</th>
       <th>Allocation_Date</th>
       <th>Last_Update</th>
-      <th>Medical_History</th>
       <th>Risk_Factor</th>
     </tr>
     <?php
-    // Loop through the result set and display the records
-    if ($result->num_rows > 0) {
+    // Display the records if the result set is not empty
+    if (isset($result) && $result->num_rows > 0) {
       while ($row = $result->fetch_assoc()) {
         echo "<tr>";
         echo "<td>" . $row['RecordID'] . "</td>";
@@ -55,12 +59,11 @@ $result = $conn->query($sql);
         echo "<td>" . $row['DeptNo'] . "</td>";
         echo "<td>" . $row['Allocation_Date'] . "</td>";
         echo "<td>" . $row['Last_Update'] . "</td>";
-        echo "<td>" . $row['Medical_history'] . "</td>";
         echo "<td>" . $row['Risk_Factor'] . "</td>";
         echo "</tr>";
       }
     } else {
-      echo "<tr><td colspan='7'>No records found.</td></tr>";
+      echo "<tr><td colspan='6'>No records found.</td></tr>";
     }
     ?>
   </table>

@@ -12,6 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit();
   } elseif ($username === 'manager' && $password === 'password') {
     $_SESSION['user_role'] = 'manager';
+    $_SESSION['deptNo'] = 'k01'; // Set the default department number for the manager here
     header('Location: manager.php');
     exit();
   } else {
@@ -22,4 +23,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   header('Location: index.php');
   exit();
 }
+
 ?>

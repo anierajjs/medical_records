@@ -22,12 +22,16 @@ if ($conn->connect_error) {
 // Update record if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $recordID = $_POST['recordID'];
+  $clientNo = $_POST['clientNo'];
+  $deptNo = $_POST['deptNo'];
+  $allocationDate = $_POST['allocationDate'];
+  $lastUpdate = $_POST['lastUpdate'];
   $medicalHistory = $_POST['medicalHistory'];
   $riskFactor = $_POST['riskFactor'];
 
   // Prepare and execute the update statement
-  $stmt = $conn->prepare("UPDATE Records SET Medical_History = ?, Risk_Factor = ? WHERE RecordID = ?");
-  $stmt->bind_param("ssi", $medicalHistory, $riskFactor, $recordID);
+  $stmt = $conn->prepare("UPDATE records SET ClientNo = ?, DeptNo = ?, Allocation_Date = ?, Last_Update = ?, Medical_History = ?, Risk_Factor = ? WHERE RecordID = ?");
+  $stmt->bind_param("ssssssi", $clientNo, $deptNo, $allocationDate, $lastUpdate, $medicalHistory, $riskFactor, $recordID);
   $stmt->execute();
 
   // Redirect to the same page to avoid resubmission of the form
@@ -36,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Fetch all records from the table
-$sql = "SELECT * FROM Records";
+$sql = "SELECT * FROM records";
 $result = $conn->query($sql);
 ?>
 
@@ -65,13 +69,21 @@ $result = $conn->query($sql);
       while ($row = $result->fetch_assoc()) {
         echo "<tr>";
         echo "<td>" . $row['RecordID'] . "</td>";
-        echo "<td>" . $row['ClientNo'] . "</td>";
-        echo "<td>" . $row['DeptNo'] . "</td>";
-        echo "<td>" . $row['Allocation_Date'] . "</td>";
-        echo "<td>" . $row['Last_Update'] . "</td>";
         echo "<td>";
         echo "<form method='post' action='analyst.php'>";
         echo "<input type='hidden' name='recordID' value='" . $row['RecordID'] . "'>";
+        echo "<input type='text' name='clientNo' value='" . $row['ClientNo'] . "'>";
+        echo "</td>";
+        echo "<td>";
+        echo "<input type='text' name='deptNo' value='" . $row['DeptNo'] . "'>";
+        echo "</td>";
+        echo "<td>";
+        echo "<input type='text' name='allocationDate' value='" . $row['Allocation_Date'] . "'>";
+        echo "</td>";
+        echo "<td>";
+        echo "<input type='text' name='lastUpdate' value='" . $row['Last_Update'] . "'>";
+        echo "</td>";
+        echo "<td>";
         echo "<input type='text' name='medicalHistory' value='" . $row['Medical_history'] . "'>";
         echo "</td>";
         echo "<td>";
